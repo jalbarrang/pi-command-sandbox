@@ -1,5 +1,12 @@
 # @dreki-gg/pi-command-sandbox
 
+## [0.4.0](https://github.com/jalbarrang/pi-command-sandbox/compare/v0.3.2...v0.4.0) (2026-07-11)
+
+
+### Features
+
+* extract pi-command-sandbox from dreki-gg/pi-extensions monorepo ([05412c8](https://github.com/jalbarrang/pi-command-sandbox/commit/05412c8648b0808b18e1fe1c4c585e291bf52e40))
+
 ## 0.3.0
 
 ### Minor Changes

@@ -1,7 +1,7 @@
 {
   "name": "@dreki-gg/pi-command-sandbox",
-  "version": "0.3.2",
-  "description": "Shared command sandboxing utilities for pi extensions \u2014 validates shell commands against safe/destructive pattern lists using proper shell parsing",
+  "version": "0.4.0",
+  "description": "Shared command sandboxing utilities for pi extensions — validates shell commands against safe/destructive pattern lists using proper shell parsing",
   "author": "Juan Albarran <jalbarrandev@gmail.com>",
   "license": "MIT",
   "repository": {
