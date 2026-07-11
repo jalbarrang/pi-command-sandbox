@@ -1,5 +1,12 @@
 # @dreki-gg/pi-command-sandbox
 
+## [0.4.2](https://github.com/jalbarrang/pi-command-sandbox/compare/v0.4.1...v0.4.2) (2026-07-11)
+
+
+### Bug Fixes
+
+* build dist before npm publish via prepublishOnly ([#6](https://github.com/jalbarrang/pi-command-sandbox/issues/6)) ([c527d17](https://github.com/jalbarrang/pi-command-sandbox/commit/c527d179ea8e97d0c9db828f038f726cf3213a48))
+
 ## [0.4.1](https://github.com/jalbarrang/pi-command-sandbox/compare/v0.4.0...v0.4.1) (2026-07-11)
 
 
