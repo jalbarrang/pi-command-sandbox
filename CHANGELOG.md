@@ -1,5 +1,12 @@
 # @dreki-gg/pi-command-sandbox
 
+## [0.4.1](https://github.com/jalbarrang/pi-command-sandbox/compare/v0.4.0...v0.4.1) (2026-07-11)
+
+
+### Bug Fixes
+
+* expose top-level types and package metadata ([#2](https://github.com/jalbarrang/pi-command-sandbox/issues/2)) ([dc05bc8](https://github.com/jalbarrang/pi-command-sandbox/commit/dc05bc8f6ea854754e6c4678a5f1718deb8272aa))
+
 ## [0.4.0](https://github.com/jalbarrang/pi-command-sandbox/compare/v0.3.2...v0.4.0) (2026-07-11)
 
 
