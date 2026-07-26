@@ -5,6 +5,9 @@
 import { hasCommandSubstitution, parseCommandSegments } from './parser.js';
 import { DESTRUCTIVE_PATTERNS, SAFE_PATTERNS } from './patterns.js';
 
+/** Commands whose arguments are data, never executable command positions. */
+const ARGUMENT_ONLY_SEARCH = /^\s*(?:grep|rg)\b/;
+
 export interface SandboxOptions {
   /**
    * Extra patterns to allow beyond the built-in SAFE_PATTERNS.
@@ -45,7 +48,8 @@ export interface SandboxOptions {
  * A command is safe only if ALL segments pass.
  *
  * For a segment to pass:
- * 1. It must NOT match any destructive pattern
+ * 1. It must NOT match an applicable destructive pattern. Built-in command names
+ *    inside grep/rg search arguments are data; caller-supplied denials still apply.
  * 2. It MUST match at least one safe pattern
  * 3. It must NOT contain redirects (unless explicitly allowed)
  *
@@ -81,14 +85,21 @@ export function isSafeCommand(command: string, options: SandboxOptions = {}): bo
   }
 
   return segments.every((segment) => {
+    if (segment.unsafeOperator !== undefined) {
+      return false;
+    }
+
     // Block redirects unless allowed
     if (!allowRedirects && segment.hasRedirect) {
       return false;
     }
 
     const cmd = segment.command;
-    const isDestructive = allDestructive.some((p) => p.test(cmd));
-    const isSafe = allSafe.some((p) => p.test(cmd));
+    // Built-in destructive words inside a search pattern are data. Keep caller
+    // supplied denials active so consumers can still forbid specific searches.
+    const destructive = ARGUMENT_ONLY_SEARCH.test(cmd) ? extraDestructive : allDestructive;
+    const isDestructive = destructive.some((pattern) => pattern.test(cmd));
+    const isSafe = allSafe.some((pattern) => pattern.test(cmd));
 
     return !isDestructive && isSafe;
   });

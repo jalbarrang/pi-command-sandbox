@@ -16,11 +16,16 @@ const DANGEROUS_OPS = new Set(['>', '>>']);
 /** Grouping operators (subshells) — we strip them and validate inner commands. */
 const GROUPING_OPS = new Set(['(', ')']);
 
+/** The only non-shell-control operator emitted for ordinary arguments. */
+const DATA_OPS = new Set(['glob']);
+
 export interface ParsedSegment {
   /** The reconstructed command string for this segment. */
   command: string;
   /** Whether this segment contains a redirect operator. */
   hasRedirect: boolean;
+  /** An operator the parser does not model and therefore refuses. */
+  unsafeOperator?: string;
 }
 
 /**
@@ -52,15 +57,19 @@ export function parseCommandSegments(input: string): ParsedSegment[] {
   const segments: ParsedSegment[] = [];
   let currentTokens: string[] = [];
   let hasRedirect = false;
+  let unsafeOperator: string | undefined;
 
   function flushSegment(): void {
-    if (currentTokens.length > 0) {
-      segments.push({
+    if (currentTokens.length > 0 || unsafeOperator !== undefined) {
+      const segment: ParsedSegment = {
         command: currentTokens.join(' '),
         hasRedirect,
-      });
+      };
+      if (unsafeOperator !== undefined) segment.unsafeOperator = unsafeOperator;
+      segments.push(segment);
       currentTokens = [];
       hasRedirect = false;
+      unsafeOperator = undefined;
     }
   }
 
@@ -72,8 +81,7 @@ export function parseCommandSegments(input: string): ParsedSegment[] {
 
     // Token is an operator object: { op: string }
     if (!('op' in token)) {
-      // Unknown token shape — treat as string
-      currentTokens.push(String(token));
+      unsafeOperator ??= '[unknown token]';
       continue;
     }
 
@@ -109,8 +117,13 @@ export function parseCommandSegments(input: string): ParsedSegment[] {
       continue;
     }
 
-    // Any other operator (e.g. glob) — include as text
-    currentTokens.push(op);
+    if (DATA_OPS.has(op) && 'pattern' in token && typeof token.pattern === 'string') {
+      currentTokens.push(token.pattern);
+      continue;
+    }
+
+    // Shell control syntax is safe only after the parser explicitly models it.
+    unsafeOperator ??= op;
   }
 
   flushSegment();
