@@ -20,6 +20,18 @@ describe('isSafeCommand', () => {
       expect(isSafeCommand('rg "pattern" src/')).toBe(true);
     });
 
+    test('destructive command names are harmless inside search arguments', () => {
+      expect(
+        isSafeCommand(
+          `rg -n -F "per-format copy" 'docs/design/creator-quests/Creator Quests.dc.html'`,
+        ),
+      ).toBe(true);
+      expect(
+        isSafeCommand('rg -n "COPY server/cloud-run/src" server/cloud-run/Dockerfile'),
+      ).toBe(true);
+      expect(isSafeCommand('grep "rm mv cp" commands.txt')).toBe(true);
+    });
+
     test('npm list', () => {
       expect(isSafeCommand('npm list --depth=0')).toBe(true);
     });
@@ -146,6 +158,19 @@ describe('isSafeCommand', () => {
     });
   });
 
+  describe('unsupported shell operators', () => {
+    test('operators the parser does not model fail closed', () => {
+      for (const command of [
+        'rg foo & rm -rf /tmp/x',
+        "cat <(sh -c 'id')",
+        "cat x |& sh -c 'id'",
+        'echo x >& /tmp/o',
+      ]) {
+        expect(isSafeCommand(command)).toBe(false);
+      }
+    });
+  });
+
   // ── Redirects ─────────────────────────────────────────────────────────────
   describe('redirects', () => {
     test('stdout redirect is blocked by default', () => {
@@ -220,6 +245,11 @@ describe('isSafeCommand', () => {
       expect(
         isSafeCommand('curl -X POST https://example.com', {
           extraDestructive: [/\bcurl\s+.*-X\s+(POST|PUT|DELETE)/i],
+        }),
+      ).toBe(false);
+      expect(
+        isSafeCommand('rg "copy" docs', {
+          extraDestructive: [/\bcopy\b/i],
         }),
       ).toBe(false);
     });

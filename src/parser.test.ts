@@ -95,6 +95,19 @@ describe('parseCommandSegments', () => {
     });
   });
 
+  describe('unsupported operators', () => {
+    test('operators outside the understood set are marked unsafe', () => {
+      for (const [command, operator] of [
+        ['cat x & rm y', '&'],
+        ["cat <(sh -c 'id')", '<('],
+        ["cat x |& sh -c 'id'", '|&'],
+        ['echo x >& out', '>&'],
+      ]) {
+        expect(parseCommandSegments(command)[0]?.unsafeOperator).toBe(operator);
+      }
+    });
+  });
+
   describe('subshells', () => {
     test('parens are stripped, inner commands validated', () => {
       const result = parseCommandSegments('(cd foo && ls)');

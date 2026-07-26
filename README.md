@@ -71,4 +71,4 @@ The package exports two pattern lists:
 - **`DESTRUCTIVE_PATTERNS`** — commands that modify the filesystem, install packages, manage processes, etc.
 - **`SAFE_PATTERNS`** — read-only commands (ls, cat, grep, git status, etc.)
 
-Both can be extended via `extraSafe` and `extraDestructive` options.
+Both can be extended via `extraSafe` and `extraDestructive` options. Built-in destructive command names inside `grep` and `rg` search arguments are treated as data, while caller-supplied `extraDestructive` patterns still apply. Shell operators the parser does not explicitly model are denied rather than treated as arguments.
