@@ -1,5 +1,12 @@
 # @dreki-gg/pi-command-sandbox
 
+## [0.4.3](https://github.com/jalbarrang/pi-command-sandbox/compare/v0.4.2...v0.4.3) (2026-07-26)
+
+
+### Bug Fixes
+
+* distinguish search data from shell control ([#8](https://github.com/jalbarrang/pi-command-sandbox/issues/8)) ([01c27db](https://github.com/jalbarrang/pi-command-sandbox/commit/01c27db8c0655ab127b3e367d315e1689cccdd5c))
+
 ## [0.4.2](https://github.com/jalbarrang/pi-command-sandbox/compare/v0.4.1...v0.4.2) (2026-07-11)
 
 
